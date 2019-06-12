@@ -1,0 +1,4 @@
+[submodule "modules/speech"]
+	path = modules/speech
+	url = https://github.com/prostoiChelovek/speech
+	branch = master
