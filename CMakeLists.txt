@@ -13,15 +13,11 @@ find_package(Boost COMPONENTS system filesystem thread REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 add_subdirectory(modules/speech)
-include_directories(modules/speech)
-includeSpeechDirs()
 
 set(SOURCE_FILES main.cpp commandProcessing.hpp utils.hpp dataCollector.hpp)
-addSpeechSources("modules/speech/" SOURCE_FILES)
 add_executable(videoTrans ${SOURCE_FILES})
 
 target_link_libraries(videoTrans ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(videoTrans ${OpenCV_LIBS})
 target_link_libraries(videoTrans ${Boost_SYSTEM_LIBRARY})
-
-linkSpeechLibs(videoTrans)
+target_link_libraries(videoTrans speech)
