@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
     }
 
     SpeechRecognition::Recognition rec("../modules/speech//data/zero_ru.cd_cont_4000",
-                                       "../modules/speech/data/test.dic", "../modules/speech/data/test.jsgf", false);
+                                       "../dict.dic", "../gram.jsgf");
     DataCollector dc(rec);
 
     RHSpeaker speaker("anna");

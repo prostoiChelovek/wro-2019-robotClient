@@ -1,0 +1,28 @@
+#JSGF V1.0;
+
+grammar test;
+<names> = компьютер|федя;
+<gL> = (окей|слушай) <names>;
+<greeting> = <gL>|<names>;
+
+<time> = сколько (времени|время);
+<outside> = (на улице)|(за окном)|снаружи;
+<inside> = внутри|дома|в помещении|в доме|внутри дома;
+<rain> = идёт дождь;
+<temperature> = [какая] температура (<inside>|<outside>);
+<humid> = [какая] влажность (<inside>|<outside>);
+<weatherCmds> = <rain>|<temperature>|<humid>;
+
+<onOff> = включи|выключи;
+<light> =  <onOff> (свет|освещение);
+
+# https://habr.com/ru/post/267539/
+<oneDgtNums> = (ноль|один|два|три|четыре|пять|шесть|семь|восемь|девять);
+<twoDgtNums> = (десять|одинадцать|двенадцать|тринадцать|четырнадцать|пятнадцать|шестнадцать|семнадцать|восемнадцать|девятнадцать)|(двадцать|тридцать|сорок|пятьдесят|шестьдесят|семьдесят|восемьдесят|девяносто)[<oneDgtNums>];
+<number> = <oneDgtNums>|<twoDgtNums>;
+
+<opts> = (нормальную|нормальная) (влажность|(температуру|температура));
+<setOpt> = установи <opts> [в] <number>;
+
+<action> = <time>|<weatherCmds>|<light>|<setOpt>;
+public <query> = <greeting> <action>;
