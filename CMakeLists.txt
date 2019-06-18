@@ -14,7 +14,7 @@ include_directories(${Boost_INCLUDE_DIR})
 
 add_subdirectory(modules/speech)
 
-set(SOURCE_FILES main.cpp commandProcessing.hpp utils.hpp dataCollector.hpp)
+set(SOURCE_FILES main.cpp commandProcessing.hpp utils.hpp dataCollector.hpp Speaker.hpp)
 add_executable(videoTrans ${SOURCE_FILES})
 
 target_link_libraries(videoTrans ${CMAKE_THREAD_LIBS_INIT})

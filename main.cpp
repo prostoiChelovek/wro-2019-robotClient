@@ -15,7 +15,7 @@ using namespace cv;
 using namespace boost::asio;
 using ip::udp;
 
-string serverAddress = "127.0.0.1";
+string serverAddress = "http://niks.duckdns.org:8080";
 int port = 1234;
 int cameraNum = 2;
 Size frameSize = Size(640, 480);
@@ -78,9 +78,14 @@ int main(int argc, char **argv) {
                                        "../new.dic", "../gram.jsgf", "../kws.kwlist");
     DataCollector dc(rec);
 
-    RHSpeaker speaker("anna");
+    RHSpeaker speaker_rh("anna");
+    Speaker speaker(speaker_rh);
+
     CommandProcessor cmdProc(speaker, dc);
 
+    speaker.callbacks["cmd"] = SpeakerCallbackFn([&](string args) {
+        cmdProc.processCmd(args);
+    });
     dc.speechRecognizer.onKw = SpeechRecognition::CallbackFn([&](string str) {
         speaker.say("Слушаю...");
     });

@@ -12,6 +12,8 @@
 #include "modules/speech/speaking.h"
 #include "modules/speech/Recognition.h"
 
+#include "Speaker.hpp"
+
 #ifdef IS_PI
 #include <wiringPi.h>
 #include <softTone.h>
@@ -33,7 +35,7 @@ public:
     steppers stps = steppers(PIN, DIR_PIN, PIN2, DIR_PIN2);
 #endif
 
-    CommandProcessor(RHSpeaker &speaker, DataCollector &comProc)
+    CommandProcessor(Speaker &speaker, DataCollector &comProc)
             : speaker(speaker), dataColl(comProc) {
 
     }
@@ -77,7 +79,7 @@ public:
                     }).detach();
                 }
                 ifKeyIs("head") {
-                    //log(INFO, "Rotating head on", val);
+                    log(INFO, "Rotating head on", val);
                 }
             }
         } catch (exception &e) {
@@ -91,7 +93,7 @@ public:
     }
 
 private:
-    RHSpeaker &speaker;
+    Speaker &speaker;
 
     void runSteppers(int dir) {
 #ifdef IS_PI
