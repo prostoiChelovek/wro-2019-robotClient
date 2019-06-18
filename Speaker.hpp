@@ -63,7 +63,7 @@ private:
                 if (speechStr[speechStr.size() - 1] == ' ' && !speechStr.empty())
                     speechStr.pop_back();
 
-                vector<string> cmd = split(cmdStr, ":");
+                vector<string> cmd = split(cmdStr, "=");
                 if (cmd.size() < 2) {
                     cmd[0] = cmd[1] = "";
                 }
