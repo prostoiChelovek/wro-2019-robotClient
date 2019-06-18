@@ -12,9 +12,26 @@
 #include "modules/speech/speaking.h"
 #include "modules/speech/Recognition.h"
 
+#ifdef IS_PI
+#include <wiringPi.h>
+#include <softTone.h>
+
+#define PIN 3
+#define PIN2 1
+#define DIR_PIN 4
+#define DIR_PIN2 0
+
+#include "steppers.h"
+#endif
+
+
 class CommandProcessor {
 public:
     DataCollector &dataColl;
+
+#ifdef IS_PI
+    steppers stps = steppers(PIN, DIR_PIN, PIN2, DIR_PIN2);
+#endif
 
     CommandProcessor(RHSpeaker &speaker, DataCollector &comProc)
             : speaker(speaker), dataColl(comProc) {
@@ -41,8 +58,8 @@ public:
             for (auto &cm : cmd) {
                 string key = cm.first;
                 string val = cm.second;
-                ifKeyIs("fwd") {
-                    //log(INFO, "Moving forward on", val, "cm");
+                ifKeyIs("move") {
+                    runSteppers(stoi(val));
                 }
                 ifKeyIs("say") {
                     log(INFO, "Speaking:", val);
@@ -75,6 +92,21 @@ public:
 
 private:
     RHSpeaker &speaker;
+
+    void runSteppers(int dir) {
+#ifdef IS_PI
+        if(dir == 0)
+          stps.setDir(-1, -1);
+        if(dir == 1)
+            stps.setDir(1, 1);
+        if(dir == 2)
+            stps.setDir(0, 0);
+        if(dir == 4)
+            stps.setDir(1, 0);
+        if(dir == 3)
+            stps.setDir(0, 1);
+#endif
+    }
 };
 
 #endif //VIDEOTRANS_COMMANDPROCESSING_HPP
