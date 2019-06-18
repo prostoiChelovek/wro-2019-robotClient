@@ -74,12 +74,16 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    SpeechRecognition::Recognition rec("../modules/speech//data/zero_ru.cd_cont_4000",
-                                       "../dict.dic", "../gram.jsgf");
+    SpeechRecognition::Recognition rec("../modules/speech/data/zero_ru_cont_8k_v3/zero_ru.cd_cont_4000",
+                                       "../new.dic", "../gram.jsgf", "../kws.kwlist");
     DataCollector dc(rec);
 
     RHSpeaker speaker("anna");
     CommandProcessor cmdProc(speaker, dc);
+
+    dc.speechRecognizer.onKw = SpeechRecognition::CallbackFn([&](string str) {
+        speaker.say("Слушаю...");
+    });
 
     //system("amixer -c 1 set \"Mic Boost\" 10%");
 

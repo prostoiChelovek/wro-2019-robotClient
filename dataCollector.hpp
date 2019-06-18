@@ -16,6 +16,8 @@ using namespace std;
 
 class DataCollector {
 public:
+    SpeechRecognition::Recognition &speechRecognizer;
+
     bool should_recognizeSpeech = true;
 
     DataCollector(SpeechRecognition::Recognition &speechRecognizer) : speechRecognizer(speechRecognizer) {
@@ -41,7 +43,6 @@ public:
     }
 
 private:
-    SpeechRecognition::Recognition &speechRecognizer;
     string speech;
 };
 

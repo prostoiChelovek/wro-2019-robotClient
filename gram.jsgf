@@ -24,4 +24,4 @@ grammar test;
 <setOpt> = установи <opts> [в] <number> [градусов|процентов];
 
 <action> = <time>|<weatherCmds>|<light>|<setOpt>;
-public <query> = <greeting> <action>;
+public <query> = <action>;
