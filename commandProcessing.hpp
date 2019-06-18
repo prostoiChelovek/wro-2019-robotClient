@@ -65,21 +65,10 @@ public:
                 }
                 ifKeyIs("say") {
                     log(INFO, "Speaking:", val);
-                    dataColl.should_recognizeSpeech = false;
-                    thread([val, this]() {
-                        try {
-                            speaker.say(val);
-                            this_thread::sleep_for(chrono::seconds(2));
-                            dataColl.should_recognizeSpeech = true;
-                        } catch (exception &e) {
-                            log(ERROR, "Cannot speak '", val, "':", e.what());
-                            this_thread::sleep_for(chrono::seconds(2));
-                            dataColl.should_recognizeSpeech = true;
-                        }
-                    }).detach();
+                    speaker.say(val);
                 }
                 ifKeyIs("head") {
-                    log(INFO, "Rotating head on", val);
+//                    log(INFO, "Rotating head on", val);
                 }
             }
         } catch (exception &e) {

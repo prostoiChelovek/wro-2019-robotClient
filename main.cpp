@@ -86,6 +86,14 @@ int main(int argc, char **argv) {
     speaker.callbacks["cmd"] = SpeakerCallbackFn([&](string args) {
         cmdProc.processCmd(args);
     });
+    speaker.callbacks["speechStart"] = SpeakerCallbackFn([&](string args) {
+        dc.should_recognizeSpeech = false;
+    });
+    speaker.callbacks["speechEnd"] = SpeakerCallbackFn([&](string args) {
+        this_thread::sleep_for(chrono::seconds(2));
+        dc.should_recognizeSpeech = true;
+    });
+
     dc.speechRecognizer.onKw = SpeechRecognition::CallbackFn([&](string str) {
         speaker.say("Слушаю...");
     });

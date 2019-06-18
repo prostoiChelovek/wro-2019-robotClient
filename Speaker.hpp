@@ -64,14 +64,16 @@ private:
                     speechStr.pop_back();
 
                 vector<string> cmd = split(cmdStr, ":");
-                if (cmd.size() == 2) {
-                    if (!cmd[0].empty() && !cmd[1].empty())
-                        toSay.emplace(speechStr, cmd[0], cmd[1]);
+                if (cmd.size() < 2) {
+                    cmd[0] = cmd[1] = "";
                 }
+                toSay.emplace(speechStr, cmd[0], cmd[1]);
 
                 temp.erase(0, endPos + 1);
             }
         }
+        if (!temp.empty())
+            toSay.emplace(temp, "", "");
     }
 
     void speakerTh() {
@@ -84,8 +86,13 @@ private:
             tie(text, cmdName, args) = sayNow;
 
             if (!text.empty()) {
-                callCb("speech", text);
-                speaker.say(text);
+                callCb("speechStart", text);
+                try {
+                    speaker.say(text);
+                } catch (exception &e) {
+                    log(ERROR, "Cannot speak '", text, "':", e.what());
+                }
+                callCb("speechEnd", text);
             }
             if (!cmdName.empty()) {
                 callCb("cmd", cmdName + ":" + args + ";");
