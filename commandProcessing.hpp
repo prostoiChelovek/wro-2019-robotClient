@@ -22,20 +22,29 @@ class CommandProcessor {
 public:
     DataCollector &dataColl;
 
-#ifdef IS_PI
-    Arduino &arduino;
-#endif
-
     int default_motor_speed = 200;
 
+    enum {
+        DANCE, PATROL, NONE
+    } currectCommand = NONE;
+
 #ifdef IS_PI
+    Arduino &arduino;
+
     CommandProcessor(Speaker &speaker, DataCollector &comProc, Arduino &arduino)
-            : speaker(speaker), dataColl(comProc), arduino(arduino) {}
+            : speaker(speaker), dataColl(comProc), arduino(arduino) {
+        cmd_loop();
+    }
 #else
     CommandProcessor(Speaker &speaker, DataCollector &comProc)
-            : speaker(speaker), dataColl(comProc) {}
-
+            : speaker(speaker), dataColl(comProc) {
+        cmd_loop();
+    }
 #endif
+
+    ~CommandProcessor() {
+        run_cmd_loop = false;
+    }
 
     map<string, string> parseCmd(const string &cmd) {
         map<string, string> res;
@@ -76,9 +85,11 @@ public:
                 ifKeyIs("command") {
                     log(INFO, "Command:", val);
                     if (val == "dance") {
-                        thread([&]() {
-                            command_dance();
-                        }).detach();
+                        currectCommand = DANCE;
+                    } else if (val == "patrol") {
+                        currectCommand = PATROL;
+                    } else {
+                        currectCommand = NONE;
                     }
                 }
             }
@@ -94,6 +105,26 @@ public:
 
 private:
     Speaker &speaker;
+
+    bool run_cmd_loop = true;
+
+    void cmd_loop() {
+        thread([&]() {
+            while (run_cmd_loop) {
+                if (currectCommand == DANCE) {
+                    command_dance();
+                } else if (currectCommand == PATROL) {
+                    command_partol();
+                } else if (currectCommand == NONE) {
+                    left_hand(0);
+                    right_hand(0);
+                    head(90);
+                    left_motor(0, 0);
+                    right_motor(0, 0);
+                }
+            }
+        });
+    }
 
     void left_hand(int val) {
 #ifdef IS_PI
@@ -128,60 +159,70 @@ private:
     }
 
     void command_dance() {
-        for (int n = 0; n < 5; n++) {
-            left_motor(default_motor_speed, 1);
-            right_motor(default_motor_speed, 0);
+        left_motor(default_motor_speed, 1);
+        right_motor(default_motor_speed, 0);
 
-            std::future<void> left_hand_f = std::async(std::launch::async, [&] {
-                for (int i = 10; i < 170; i++) {
-                    left_hand(i);
-                    this_thread::sleep_for(chrono::milliseconds(5));
-                }
-            });
-            std::future<void> right_hand_f = std::async(std::launch::async, [&] {
-                for (int i = 170; i > 10; i--) {
-                    right_hand(i);
-                    this_thread::sleep_for(chrono::milliseconds(5));
-                }
-            });
-            std::future<void> head_f = std::async(std::launch::async, [&] {
-                for (int i = 10; i < 170; i++) {
-                    head(i);
-                    this_thread::sleep_for(chrono::milliseconds(5));
-                }
-            });
-            left_hand_f.wait();
-            right_hand_f.wait();
-            head_f.wait();
+        std::future<void> left_hand_f = std::async(std::launch::async, [&] {
+            for (int i = 10; i < 170; i++) {
+                left_hand(i);
+                this_thread::sleep_for(chrono::milliseconds(5));
+            }
+        });
+        std::future<void> right_hand_f = std::async(std::launch::async, [&] {
+            for (int i = 170; i > 10; i--) {
+                right_hand(i);
+                this_thread::sleep_for(chrono::milliseconds(5));
+            }
+        });
+        std::future<void> head_f = std::async(std::launch::async, [&] {
+            for (int i = 10; i < 170; i++) {
+                head(i);
+                this_thread::sleep_for(chrono::milliseconds(5));
+            }
+        });
+        left_hand_f.wait();
+        right_hand_f.wait();
+        head_f.wait();
 
-            left_motor(default_motor_speed, 0);
-            right_motor(default_motor_speed, 1);
+        left_motor(default_motor_speed, 0);
+        right_motor(default_motor_speed, 1);
 
-            left_hand_f = std::async(std::launch::async, [&] {
-                for (int i = 170; i > 10; i--) {
-                    left_hand(i);
-                    this_thread::sleep_for(chrono::milliseconds(5));
-                }
-            });
-            right_hand_f = std::async(std::launch::async, [&] {
-                for (int i = 10; i < 170; i++) {
-                    right_hand(i);
-                    this_thread::sleep_for(chrono::milliseconds(5));
-                }
-            });
-            head_f = std::async(std::launch::async, [&] {
-                for (int i = 170; i > 10; i--) {
-                    head(i);
-                    this_thread::sleep_for(chrono::milliseconds(5));
-                }
-            });
-            left_hand_f.wait();
-            right_hand_f.wait();
-            head_f.wait();
+        left_hand_f = std::async(std::launch::async, [&] {
+            for (int i = 170; i > 10; i--) {
+                left_hand(i);
+                this_thread::sleep_for(chrono::milliseconds(5));
+            }
+        });
+        right_hand_f = std::async(std::launch::async, [&] {
+            for (int i = 10; i < 170; i++) {
+                right_hand(i);
+                this_thread::sleep_for(chrono::milliseconds(5));
+            }
+        });
+        head_f = std::async(std::launch::async, [&] {
+            for (int i = 170; i > 10; i--) {
+                head(i);
+                this_thread::sleep_for(chrono::milliseconds(5));
+            }
+        });
+        left_hand_f.wait();
+        right_hand_f.wait();
+        head_f.wait();
+    }
+
+    void command_partol() {
+        left_motor(default_motor_speed, 1);
+        right_motor(default_motor_speed, 1);
+
+        for (int i = 10; i < 170; i++) {
+            head(i);
+            this_thread::sleep_for(chrono::milliseconds(10));
         }
-
-        left_motor(0, 0);
-        right_motor(0, 0);
+        this_thread::sleep_for(chrono::milliseconds(400));
+        for (int i = 170; i > 10; i--) {
+            head(i);
+            this_thread::sleep_for(chrono::milliseconds(10));
+        }
     }
 
 };
