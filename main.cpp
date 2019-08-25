@@ -20,9 +20,11 @@ int port = 1234;
 int cameraNum = 2;
 Size frameSize = Size(640, 480);
 
+const int arduino_i2c_addr = 8;
+
 enum Lang {
     RUSSIAN, ENGLISH
-} lang = RUSSIAN;
+} lang = ENGLISH;
 
 const string dataDir = "../data";
 const string speechModule_data = "../modules/speech/data";
@@ -32,6 +34,7 @@ const string ru_gram = dataDir + "/ru.jsgf";
 const string ru_kws = dataDir + "/ru.kwlist";
 const string ru_voice = "anna";
 const string ru_listen_phrase = "Слушаю...";
+
 const string en_model = speechModule_data + "/cmusphinx-en-us-5.2";
 const string en_dict = dataDir + "/en.dic";
 const string en_gram = dataDir + "/en.jsgf";
@@ -124,7 +127,14 @@ int main(int argc, char **argv) {
     RHSpeaker speaker_rh(current_voice);
     Speaker speaker(speaker_rh);
 
+#ifdef IS_PI
+    Arduino arduino(arduino_i2c_addr);
+
+    dc.set_arduino(arduino);
+    CommandProcessor cmdProc(speaker, dc, arduino);
+#else
     CommandProcessor cmdProc(speaker, dc);
+#endif
 
     speaker.callbacks["cmd"] = SpeakerCallbackFn([&](string args) {
         cmdProc.processCmd(args);
@@ -133,7 +143,7 @@ int main(int argc, char **argv) {
         dc.should_recognizeSpeech = false;
     });
     speaker.callbacks["speechEnd"] = SpeakerCallbackFn([&](string args) {
-        this_thread::sleep_for(chrono::seconds(2));
+        //  this_thread::sleep_for(chrono::seconds(1));
         dc.should_recognizeSpeech = true;
     });
 

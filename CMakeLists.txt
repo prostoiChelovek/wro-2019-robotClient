@@ -16,7 +16,7 @@ include_directories(${Boost_INCLUDE_DIR})
 
 add_subdirectory(modules/speech)
 
-set(SOURCE_FILES main.cpp commandProcessing.hpp utils.hpp dataCollector.hpp Speaker.hpp)
+set(SOURCE_FILES main.cpp commandProcessing.hpp utils.hpp dataCollector.hpp Speaker.hpp arduino.hpp)
 add_executable(videoTrans ${SOURCE_FILES})
 
 target_link_libraries(videoTrans ${CMAKE_THREAD_LIBS_INIT})
@@ -26,5 +26,5 @@ target_link_libraries(videoTrans speech)
 if (${ON_PI})
     message(STATUS "On PI")
     target_compile_definitions(videoTrans PRIVATE IS_PI=1)
-    target_link_libraries(videoTrans wiringPi)
+    target_link_libraries(videoTrans ${CMAKE_CURRENT_SOURCE_DIR}/modules/Pi2c/pi2c.o)
 endif ()

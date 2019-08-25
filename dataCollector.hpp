@@ -10,6 +10,10 @@
 
 #include "utils.hpp"
 
+#ifdef IS_PI
+#include "arduino.hpp"
+#endif
+
 #include "modules/speech/Recognition.h"
 
 using namespace std;
@@ -18,15 +22,26 @@ class DataCollector {
 public:
     SpeechRecognition::Recognition &speechRecognizer;
 
+#ifdef IS_PI
+    Arduino &arduino;
+#endif
+
     bool should_recognizeSpeech = true;
 
-    DataCollector(SpeechRecognition::Recognition &speechRecognizer) : speechRecognizer(speechRecognizer) {
+    explicit DataCollector(SpeechRecognition::Recognition &speechRecognizer)
+            : speechRecognizer(speechRecognizer) {
         SpeechRecognition::CallbackFn cb = [&](string str) {
             speech = str;
         };
         speechRecognizer.onRecognize = cb;
         speechRecognizer.start();
     }
+
+#ifdef IS_PI
+    void set_arduino(Arduino &ardu) {
+        arduino = ardu;
+    }
+#endif
 
     map<string, string> collectData() {
         map<string, string> res;
@@ -38,7 +53,12 @@ public:
         if (!speech.empty() && !should_recognizeSpeech)
             speech.clear();
 
-        res["temp"] = to_string(30);
+#ifdef IS_PI
+        res["dist"] = arduino.get_data(0);
+        res["x"] = arduino.get_data(1);
+        res["y"] = arduino.get_data(2);
+        res["z"] = arduino.get_data(3);
+#endif
         return res;
     }
 

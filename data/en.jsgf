@@ -8,8 +8,8 @@ grammar test;
 
 <outside> = (outside);
 <inside> = inside | (<inThe> house) | <inThe> room;
-<temperature> = [(<what>)] temperature (<inside> | <outside>);
-<humid> = [(<what>)] humidity (<inside> | <outside>);
+<temperature> = [(<what>)] temperature (<outside>);
+<humid> = [(<what>)] humidity (<outside>);
 
 <onOff> = on | off;
 <light> =  (turn <onOff> (light | lighting)) | light <onOff>;
