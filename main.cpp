@@ -15,10 +15,31 @@ using namespace cv;
 using namespace boost::asio;
 using ip::udp;
 
-string serverAddress = "http://niks.duckdns.org:8080";
+string serverAddress = "127.0.0.1";
 int port = 1234;
 int cameraNum = 2;
 Size frameSize = Size(640, 480);
+
+enum Lang {
+    RUSSIAN, ENGLISH
+} lang = RUSSIAN;
+
+const string dataDir = "../data";
+const string speechModule_data = "../modules/speech/data";
+const string ru_model = speechModule_data + "/zero_ru_cont_8k_v3/zero_ru.cd_cont_4000";
+const string ru_dict = dataDir + "/ru.dic";
+const string ru_gram = dataDir + "/ru.jsgf";
+const string ru_kws = dataDir + "/ru.kwlist";
+const string ru_voice = "anna";
+const string ru_listen_phrase = "Слушаю...";
+const string en_model = speechModule_data + "/cmusphinx-en-us-5.2";
+const string en_dict = dataDir + "/en.dic";
+const string en_gram = dataDir + "/en.jsgf";
+const string en_kws = dataDir + "/en.kwlist";
+const string en_voice = "alan";
+const string en_listen_phrase = "Listening...";
+
+bool show_ps_log = true;
 
 vector<VideoCapture> openCaptures(int num) {
     vector<VideoCapture> res;
@@ -29,6 +50,8 @@ vector<VideoCapture> openCaptures(int num) {
         else
             res.emplace_back(cap);
     }
+    //res.emplace_back("camR.avi");
+    //res.emplace_back("camL.avi");
 
     return res;
 }
@@ -74,11 +97,31 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    SpeechRecognition::Recognition rec("../modules/speech/data/zero_ru_cont_8k_v3/zero_ru.cd_cont_4000",
-                                       "../new.dic", "../gram.jsgf", "../kws.kwlist");
+    string current_model, current_dict, current_gram, current_kws;
+    string current_voice, current_listen_phrase;
+    if (lang == RUSSIAN) {
+        current_model = ru_model;
+        current_dict = ru_dict;
+        current_gram = ru_gram;
+        current_kws = ru_kws;
+
+        current_voice = ru_voice;
+        current_listen_phrase = ru_listen_phrase;
+    } else if (lang == ENGLISH) {
+        current_model = en_model;
+        current_dict = en_dict;
+        current_gram = en_gram;
+        current_kws = en_kws;
+
+        current_voice = en_voice;
+        current_listen_phrase = en_listen_phrase;
+    }
+
+    SpeechRecognition::Recognition rec(current_model, current_dict,
+                                       current_gram, current_kws, !show_ps_log);
     DataCollector dc(rec);
 
-    RHSpeaker speaker_rh("anna");
+    RHSpeaker speaker_rh(current_voice);
     Speaker speaker(speaker_rh);
 
     CommandProcessor cmdProc(speaker, dc);
@@ -95,19 +138,20 @@ int main(int argc, char **argv) {
     });
 
     dc.speechRecognizer.onKw = SpeechRecognition::CallbackFn([&](string str) {
-        speaker.say("Слушаю...");
+        speaker.say(current_listen_phrase);
     });
 
     //system("amixer -c 1 set \"Mic Boost\" 10%");
 
     Mat img, imgGray, all;
+    // Send images to server and recieve command
     while (true) {
         vector<Mat> frames = captureFrames(caps);
 
         hconcat(frames, all);
         cvtColor(all, imgGray, COLOR_BGR2GRAY);
         vector<uchar> compressed;
-        imencode(".jpeg", imgGray, compressed);
+        imencode(".jpeg", all, compressed);
 
         boost::asio::streambuf buf;
         try {

@@ -70,6 +70,12 @@ public:
                 ifKeyIs("head") {
 //                    log(INFO, "Rotating head on", val);
                 }
+                ifKeyIs("right") {
+//                    log(INFO, "Right hand:", val);
+                }
+                ifKeyIs("left") {
+//                    log(INFO, "Left hand:", val);
+                }
             }
         } catch (exception &e) {
             log(ERROR, "Cannot process command:", e.what());

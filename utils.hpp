@@ -20,23 +20,23 @@ enum LogType {
 
 template<typename T>
 void coutMany(T t) {
-    cout << t << " " << endl;
+    std::cout << t << " " << std::endl;
 }
 
 template<typename T, typename... Args>
 void coutMany(T t, Args... args) { // recursive variadic function
-    cout << t << " " << flush;
+    std::cout << t << " " << std::flush;
     coutMany(args...);
 }
 
 template<typename T>
 void cerrMany(T t) {
-    cerr << t << " " << endl;
+    std::cerr << t << " " << std::endl;
 }
 
 template<typename T, typename... Args>
 void cerrMany(T t, Args... args) { // recursive variadic function
-    cerr << t << " " << flush;
+    std::cerr << t << " " << std::flush;
     cerrMany(args...);
 }
 
@@ -44,18 +44,18 @@ template<typename T, typename... Args>
 void log(int type, T t, Args... args) {
     switch (type) {
         case INFO:
-            cout << "INFO: ";
+            std::cout << "\033[;32mINFO:\033[0m ";
             coutMany(t, args...);
             break;
         case WARNING:
-            cerr << "WARNING: ";
-            cerrMany(t, args...);
+            std::cout << "\033[1;33mWARNING:\033[0m ";
+            coutMany(t, args...);
             break;
         case ERROR:
-            cerr << "ERROR: ";
+            std::cerr << "\033[1;31mERROR:\033[0m ";
             cerrMany(t, args...);
             break;
-    };
+    }
 }
 
 vector<string> split(const string &str, const string &delim) {

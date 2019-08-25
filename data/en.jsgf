@@ -1,0 +1,32 @@
+#JSGF V1.0;
+
+grammar test;
+
+<inThe> = in [the];
+<what> = (what [<isThe>]) | (what`s);
+<isThe> = is the;
+
+<outside> = (outside);
+<inside> = inside | (<inThe> house) | <inThe> room;
+<temperature> = [(<what>)] temperature (<inside> | <outside>);
+<humid> = [(<what>)] humidity (<inside> | <outside>);
+
+<onOff> = on | off;
+<light> =  (turn <onOff> (light | lighting)) | light <onOff>;
+
+<oneDgts> = one | two | three | four | five | six | seven | eight | nine;
+<number> =  [(ten | eleven | twelve | thirteen | fourteen | fifteen |
+            sixteen | seventeen | eighteen | nineteen | twenty | thirty | forty |
+            fifty | sixty | seventy | eighty | ninety)] [<oneDgts>];
+
+<opts> = (humidity | temperature) | (watering frequency);
+<setOpt> = set [the] <opts> [to] <number> [degrees | percents | days];
+
+<modes> = party;
+<setMode> = <modes> mode;
+
+<bye> = goodbye;
+
+<growerWin> = (open | close) [the] grower;
+
+public <query> = <temperature> | <humid> | <light> | <setOpt> | <bye> | <growerWin> | <setMode>;

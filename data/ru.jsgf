@@ -1,8 +1,8 @@
 #JSGF V1.0;
 
 grammar test;
-<names> = инок;
-<greeting> = слушай <names>;
+<names> = компьютер;
+<greeting> = окей <names>;
 
 <time> = сколько (времени|время);
 <outside> = (на улице)|(за окном)|снаружи;
@@ -22,12 +22,15 @@ grammar test;
 <opts> = (влажность|температуру)|(частоту полива);
 <setOpt> = установи <opts> [в] <number> [градусов|процентов|дней];
 
-<tank> = танк (влево|вправо|вперёд|назад|стоп);
+<modes> = вечеринка;
+<setMode> = режим <modes>;
+
+<tellYourself> = расскажи о себе;
 
 <bye> = до завтра;
 
-<rowerWin> = (открой|закрой) теплицу;
+<growerWin> = (открой|закрой) теплицу;
 
-<action> = <time>|<weatherCmds>|<light>|<setOpt>|<bye>|<rowerWin>;
+<action> = <time>|<weatherCmds>|<light>|<setOpt>|<bye>|<growerWin>|<setMode>|<tellYourself>;
 
 public <query> = <action>;
