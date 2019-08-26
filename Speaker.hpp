@@ -92,6 +92,7 @@ private:
                 } catch (exception &e) {
                     log(ERROR, "Cannot speak '", text, "':", e.what());
                 }
+
                 callCb("speechEnd", text);
             }
             if (!cmdName.empty()) {

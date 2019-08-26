@@ -24,7 +24,7 @@ const int arduino_i2c_addr = 8;
 
 enum Lang {
     RUSSIAN, ENGLISH
-} lang = ENGLISH;
+} lang = RUSSIAN;
 
 const string dataDir = "../data";
 const string speechModule_data = "../modules/speech/data";
@@ -32,14 +32,14 @@ const string ru_model = speechModule_data + "/zero_ru_cont_8k_v3/zero_ru.cd_cont
 const string ru_dict = dataDir + "/ru.dic";
 const string ru_gram = dataDir + "/ru.jsgf";
 const string ru_kws = dataDir + "/ru.kwlist";
-const string ru_voice = "anna";
+const string ru_voice = "irina";
 const string ru_listen_phrase = "Слушаю...";
 
 const string en_model = speechModule_data + "/cmusphinx-en-us-5.2";
 const string en_dict = dataDir + "/en.dic";
 const string en_gram = dataDir + "/en.jsgf";
 const string en_kws = dataDir + "/en.kwlist";
-const string en_voice = "alan";
+const string en_voice = "Slt";
 const string en_listen_phrase = "Listening...";
 
 bool show_ps_log = true;
@@ -140,16 +140,18 @@ int main(int argc, char **argv) {
         cmdProc.processCmd(args);
     });
     speaker.callbacks["speechStart"] = SpeakerCallbackFn([&](string args) {
-        dc.should_recognizeSpeech = false;
+        dc.speechRecognizer.pause = true;
     });
     speaker.callbacks["speechEnd"] = SpeakerCallbackFn([&](string args) {
-        //  this_thread::sleep_for(chrono::seconds(1));
-        dc.should_recognizeSpeech = true;
+        dc.speechRecognizer.pause = false;
     });
 
     dc.speechRecognizer.onKw = SpeechRecognition::CallbackFn([&](string str) {
         speaker.say(current_listen_phrase);
     });
+
+    //speaker.say("Приветствую, меня зовут Гоголь, я являюсь автономным антропоморфным роботом, предназначенным для коммуникации с человеком. Я умею распознавать лица, человеческую речь. Могу передвигаться по помещению. Для восприятия окружающей сред>ы использую стерео зрение");
+    //speaker.say("ok, google... Here you can see Gogol. It's autonomous humanoid robot which can interact with humans by using voice commands. Also Gogol has advanced face recognition system based on neural networks. Actually we use two cameras in robo, to collect more information about the environment. This system called is stereo vision. Now what we can say about robot's movement. Gogol uses stepper motors for riding. It can shake hands or rotate its head.");
 
     //system("amixer -c 1 set \"Mic Boost\" 10%");
 

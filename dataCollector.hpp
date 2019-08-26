@@ -26,8 +26,6 @@ public:
     Arduino &arduino;
 #endif
 
-    bool should_recognizeSpeech = true;
-
     explicit DataCollector(SpeechRecognition::Recognition &speechRecognizer)
             : speechRecognizer(speechRecognizer) {
         SpeechRecognition::CallbackFn cb = [&](string str) {
@@ -45,13 +43,11 @@ public:
 
     map<string, string> collectData() {
         map<string, string> res;
-        if (!speech.empty() && should_recognizeSpeech) {
+        if (!speech.empty()) {
             log(INFO, "Speech recognized:", speech);
             res["speech"] = speech;
             speech.clear();
         }
-        if (!speech.empty() && !should_recognizeSpeech)
-            speech.clear();
 
 #ifdef IS_PI
         res["dist"] = arduino.get_data(0);

@@ -25,12 +25,13 @@ grammar test;
 <modes> = вечеринка;
 <setMode> = режим <modes>;
 
-<tellYourself> = расскажи о себе;
-
 <bye> = до завтра;
 
 <growerWin> = (открой|закрой) теплицу;
 
-<action> = <time>|<weatherCmds>|<light>|<setOpt>|<bye>|<growerWin>|<setMode>|<tellYourself>;
+<deviceNames> = лампу | танк | grower | себе;
+<show> = (покажи | продемонстрируй <deviceNames>) | расскажи о себе;
+
+<action> = <time>|<weatherCmds>|<light>|<setOpt>|<bye>|<growerWin>|<setMode>|<show>;
 
 public <query> = <action>;

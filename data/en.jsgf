@@ -29,4 +29,9 @@ grammar test;
 
 <growerWin> = (open | close) [the] grower;
 
-public <query> = <temperature> | <humid> | <light> | <setOpt> | <bye> | <growerWin> | <setMode>;
+<introduce> = introduce yourself;
+
+<deviceNames> = lamp | tank | grower | yourself;
+<show> = show [the] <deviceNames>;
+
+public <query> = <temperature> | <humid> | <light> | <setOpt> | <bye> | <growerWin> | <setMode> | <show>;

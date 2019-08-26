@@ -123,7 +123,7 @@ private:
                     right_motor(0, 0);
                 }
             }
-        });
+        }).detach();
     }
 
     void left_hand(int val) {
