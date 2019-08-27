@@ -24,7 +24,7 @@ const int arduino_i2c_addr = 8;
 
 enum Lang {
     RUSSIAN, ENGLISH
-} lang = RUSSIAN;
+} lang = ENGLISH;
 
 const string dataDir = "../data";
 const string speechModule_data = "../modules/speech/data";
@@ -34,6 +34,7 @@ const string ru_gram = dataDir + "/ru.jsgf";
 const string ru_kws = dataDir + "/ru.kwlist";
 const string ru_voice = "irina";
 const string ru_listen_phrase = "Слушаю...";
+const string ru_hello_phrase = "Привет, мир!";
 
 const string en_model = speechModule_data + "/cmusphinx-en-us-5.2";
 const string en_dict = dataDir + "/en.dic";
@@ -41,6 +42,7 @@ const string en_gram = dataDir + "/en.jsgf";
 const string en_kws = dataDir + "/en.kwlist";
 const string en_voice = "Slt";
 const string en_listen_phrase = "Listening...";
+const string en_hello_phrase = "Hello, world!";
 
 bool show_ps_log = true;
 
@@ -101,7 +103,7 @@ int main(int argc, char **argv) {
     }
 
     string current_model, current_dict, current_gram, current_kws;
-    string current_voice, current_listen_phrase;
+    string current_voice, current_listen_phrase, current_hello_phrase;
     if (lang == RUSSIAN) {
         current_model = ru_model;
         current_dict = ru_dict;
@@ -110,6 +112,7 @@ int main(int argc, char **argv) {
 
         current_voice = ru_voice;
         current_listen_phrase = ru_listen_phrase;
+        current_hello_phrase = ru_hello_phrase;
     } else if (lang == ENGLISH) {
         current_model = en_model;
         current_dict = en_dict;
@@ -118,6 +121,7 @@ int main(int argc, char **argv) {
 
         current_voice = en_voice;
         current_listen_phrase = en_listen_phrase;
+        current_hello_phrase = en_hello_phrase;
     }
 
     SpeechRecognition::Recognition rec(current_model, current_dict,
@@ -150,13 +154,12 @@ int main(int argc, char **argv) {
         speaker.say(current_listen_phrase);
     });
 
-    //speaker.say("Приветствую, меня зовут Гоголь, я являюсь автономным антропоморфным роботом, предназначенным для коммуникации с человеком. Я умею распознавать лица, человеческую речь. Могу передвигаться по помещению. Для восприятия окружающей сред>ы использую стерео зрение");
-    //speaker.say("ok, google... Here you can see Gogol. It's autonomous humanoid robot which can interact with humans by using voice commands. Also Gogol has advanced face recognition system based on neural networks. Actually we use two cameras in robo, to collect more information about the environment. This system called is stereo vision. Now what we can say about robot's movement. Gogol uses stepper motors for riding. It can shake hands or rotate its head.");
+    speaker.say(current_hello_phrase);
 
     //system("amixer -c 1 set \"Mic Boost\" 10%");
 
     Mat img, imgGray, all;
-    // Send images to server and recieve command
+    // Send images to server and receive command
     while (true) {
         vector<Mat> frames = captureFrames(caps);
 

@@ -15,9 +15,10 @@ grammar test;
 <light> =  (turn <onOff> (light | lighting)) | light <onOff>;
 
 <oneDgts> = one | two | three | four | five | six | seven | eight | nine;
-<number> =  [(ten | eleven | twelve | thirteen | fourteen | fifteen |
-            sixteen | seventeen | eighteen | nineteen | twenty | thirty | forty |
-            fifty | sixty | seventy | eighty | ninety)] [<oneDgts>];
+<twoDgts> = ten | eleven | twelve | thirteen | fourteen | fifteen |
+                         sixteen | seventeen | eighteen | nineteen;
+<combined> =  twenty | thirty | forty | fifty | sixty | seventy | eighty | ninety;
+<number> = <oneDgts> | <twoDgts> | (<combined> [<oneDgts>]);
 
 <opts> = (humidity | temperature) | (watering frequency);
 <setOpt> = set [the] <opts> [to] <number> [degrees | percents | days];
@@ -34,4 +35,5 @@ grammar test;
 <deviceNames> = lamp | tank | grower | yourself;
 <show> = show [the] <deviceNames>;
 
-public <query> = <temperature> | <humid> | <light> | <setOpt> | <bye> | <growerWin> | <setMode> | <show>;
+public <query> = (<temperature> | <humid> | <light> | <setOpt> | <bye> | <growerWin>
+        | <setMode> | <show>) [and <query>];
